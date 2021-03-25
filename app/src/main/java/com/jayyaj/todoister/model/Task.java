@@ -26,9 +26,6 @@ public class Task {
     @ColumnInfo(name = "is_done")
     public Boolean isDone;
 
-    public Task() {
-    }
-
     public Task(String name, Priority priority, Date dueDate, Date dateCreated, Boolean isDone) {
         this.name = name;
         this.priority = priority;

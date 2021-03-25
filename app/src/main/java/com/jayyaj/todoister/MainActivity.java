@@ -5,18 +5,28 @@ import android.os.Bundle;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 import com.jayyaj.todoister.databinding.ActivityMainBinding;
+import com.jayyaj.todoister.model.Priority;
+import com.jayyaj.todoister.model.Task;
+import com.jayyaj.todoister.model.TaskViewModel;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.databinding.DataBindingUtil;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 
+import android.util.Log;
 import android.view.View;
 
 import android.view.Menu;
 import android.view.MenuItem;
 
+import java.util.Calendar;
+import java.util.List;
+
 public class MainActivity extends AppCompatActivity {
     ActivityMainBinding binding;
+    private TaskViewModel taskViewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,15 +36,21 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         binding = DataBindingUtil.setContentView(MainActivity.this, R.layout.activity_main);
 
-        FloatingActionButton fab = findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
+        taskViewModel = new ViewModelProvider.AndroidViewModelFactory(
+                MainActivity.this
+                .getApplication())
+                .create(TaskViewModel.class);
+
+        taskViewModel.getAllTasks().observe(MainActivity.this, tasks -> {
+            for (Task task : tasks)
+                Log.d("Tasks", task.getName());
         });
-    }
+
+        binding.fab.setOnClickListener(view -> {
+            Task task = new Task("To do", Priority.CHILL, Calendar.getInstance().getTime(), Calendar.getInstance().getTime(), false);
+            TaskViewModel.create(task);
+        });
+    };
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

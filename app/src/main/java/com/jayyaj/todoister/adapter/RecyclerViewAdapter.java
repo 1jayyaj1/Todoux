@@ -8,13 +8,14 @@ import android.widget.RadioButton;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.widget.AppCompatRadioButton;
+import androidx.appcompat.widget.AppCompatTextView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.chip.Chip;
 import com.jayyaj.todoister.R;
 import com.jayyaj.todoister.model.Task;
 
-import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
@@ -33,7 +34,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.todo_row, parent, false);
+                .inflate(R.layout.task_row, parent, false);
         return new ViewHolder(view, onTaskClickListener);
     }
 
@@ -42,7 +43,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         Task task = Objects.requireNonNull(taskList.get(position));
         holder.name.setText(task.getName());
         holder.isDone.setChecked(task.getDone());
-        holder.dueDate.setText(task.getDueDate().toString().trim());
+        holder.day.setText(task.getDueDate().toString().trim());
     }
 
     @Override
@@ -52,15 +53,15 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
 
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         OnTaskClickListener onTaskClickListener;
-        public TextView name;
-        public RadioButton isDone;
-        public Chip dueDate;
+        public AppCompatRadioButton isDone;
+        public AppCompatTextView name;
+        public Chip day;
 
         public ViewHolder(@NonNull View itemView, OnTaskClickListener onTaskClickListener) {
             super(itemView);
             name = itemView.findViewById(R.id.todo_row_todo);
             isDone = itemView.findViewById(R.id.todo_radio_button);
-            dueDate = itemView.findViewById(R.id.todo_row_chip);
+            day = itemView.findViewById(R.id.todo_row_chip);
             this.onTaskClickListener = onTaskClickListener;
             itemView.setOnClickListener(this);
         }
