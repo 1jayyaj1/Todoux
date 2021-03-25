@@ -28,7 +28,7 @@ public class TaskRepository {
         });
     }
 
-    public LiveData<Task> getContact(int id) {
+    public LiveData<Task> getTask(int id) {
         return taskDao.getContact(id);
     }
 
