@@ -10,17 +10,16 @@ import com.jayyaj.todoister.util.TaskRoomDatabase;
 import java.util.List;
 
 public class TaskRepository {
-    private TaskDao taskDao;
-    private LiveData<List<Task>> allTasks;
+    private final TaskDao taskDao;
+    private final LiveData<List<Task>> allTasks;
 
     public TaskRepository(Application application) {
         TaskRoomDatabase db = TaskRoomDatabase.getDatabase(application);
         taskDao = db.taskDao();
-
         allTasks = taskDao.getAllTasks();
     }
 
-    public LiveData<List<Task>> getAllData() { return allTasks; }
+    public LiveData<List<Task>> getAllTasks() { return allTasks; }
 
     public void create(Task task) {
         TaskRoomDatabase.databaseWriteExecutor.execute(() -> {
@@ -28,7 +27,7 @@ public class TaskRepository {
         });
     }
 
-    public LiveData<Task> getTask(int id) {
+    public LiveData<Task> getTask(long id) {
         return taskDao.getTask(id);
     }
 

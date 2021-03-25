@@ -16,29 +16,15 @@ import java.util.concurrent.Executors;
 
 @Database(entities = {Task.class}, version = 1, exportSchema = false)
 public abstract class TaskRoomDatabase extends RoomDatabase {
-
     public abstract TaskDao taskDao();
 
     public static final int NUMBER_THREADS = 2;
 
     private static volatile TaskRoomDatabase INSTANCE;
 
-    public static ExecutorService databaseWriteExecutor = Executors.newFixedThreadPool(NUMBER_THREADS);
+    public static final String DATABASE_NAME = "todoux_db";
 
-    public static TaskRoomDatabase getDatabase(final Context context) {
-        if (INSTANCE == null) {
-            synchronized (TaskRoomDatabase.class) {
-                if(INSTANCE == null) {
-                    INSTANCE = Room.databaseBuilder(context.getApplicationContext(),
-                            TaskRoomDatabase.class,
-                            "task_database")
-                            .addCallback(sRoomDatabaseCallback)
-                            .build();
-                }
-            }
-        }
-        return INSTANCE;
-    }
+    public static ExecutorService databaseWriteExecutor = Executors.newFixedThreadPool(NUMBER_THREADS);
 
     private static final RoomDatabase.Callback sRoomDatabaseCallback =
             new RoomDatabase.Callback() {
@@ -51,4 +37,19 @@ public abstract class TaskRoomDatabase extends RoomDatabase {
                     });
                 }
             };
+
+    public static TaskRoomDatabase getDatabase(final Context context) {
+        if (INSTANCE == null) {
+            synchronized (TaskRoomDatabase.class) {
+                if(INSTANCE == null) {
+                    INSTANCE = Room.databaseBuilder(context.getApplicationContext(),
+                            TaskRoomDatabase.class,
+                            DATABASE_NAME)
+                            .addCallback(sRoomDatabaseCallback)
+                            .build();
+                }
+            }
+        }
+        return INSTANCE;
+    }
 }

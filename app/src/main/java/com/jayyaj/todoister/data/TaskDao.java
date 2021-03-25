@@ -23,8 +23,8 @@ public interface TaskDao {
     @Query("SELECT * FROM task_table ORDER BY name ASC")
     LiveData<List<Task>> getAllTasks();
 
-    @Query("SELECT * FROM task_table WHERE task_table.id == :id")
-    LiveData<Task> getTask(int id);
+    @Query("SELECT * FROM task_table WHERE task_table.task_id == :id")
+    LiveData<Task> getTask(long id);
 
     @Update
     void update(Task task);
