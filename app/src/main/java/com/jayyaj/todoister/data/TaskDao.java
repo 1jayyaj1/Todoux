@@ -14,8 +14,6 @@ import java.util.List;
 
 @Dao
 public interface TaskDao {
-    //CRUD operations for Contact
-
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     void create(Task task);
 
@@ -26,11 +24,11 @@ public interface TaskDao {
     LiveData<List<Task>> getAllTasks();
 
     @Query("SELECT * FROM task_table WHERE task_table.id == :id")
-    LiveData<Task> getContact(int id);
+    LiveData<Task> getTask(int id);
 
     @Update
-    void update(Task contact);
+    void update(Task task);
 
     @Delete
-    void delete(Task contact);
+    void delete(Task task);
 }

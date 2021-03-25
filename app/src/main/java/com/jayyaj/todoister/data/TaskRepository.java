@@ -22,14 +22,14 @@ public class TaskRepository {
 
     public LiveData<List<Task>> getAllData() { return allTasks; }
 
-    public void create(Task contact) {
+    public void create(Task task) {
         TaskRoomDatabase.databaseWriteExecutor.execute(() -> {
-            taskDao.create(contact);
+            taskDao.create(task);
         });
     }
 
     public LiveData<Task> getTask(int id) {
-        return taskDao.getContact(id);
+        return taskDao.getTask(id);
     }
 
     public void update(Task task) {
