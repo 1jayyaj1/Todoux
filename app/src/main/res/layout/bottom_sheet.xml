@@ -95,7 +95,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="275dp"
-            android:visibility="visible"
+            android:visibility="gone"
             app:constraint_referenced_ids="priorityRadioGroup,priorityTitleText"
             app:layout_constraintBottom_toBottomOf="parent" />
 
@@ -228,7 +228,7 @@
             android:id="@+id/calendarGroup"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:visibility="visible"
+            android:visibility="gone"
             app:constraint_referenced_ids="todayButton,tomorrowButton,nextWeekButton,dateTitleText,calendarView" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>

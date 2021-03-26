@@ -44,6 +44,7 @@ public class MainActivity extends AppCompatActivity {
         recyclerView = findViewById(R.id.recycler_view);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(MainActivity.this));
+
         fab = findViewById(R.id.fab);
 
         bottomSheetFragment = new BottomSheetFragment();
