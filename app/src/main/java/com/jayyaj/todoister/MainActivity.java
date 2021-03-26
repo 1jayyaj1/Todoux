@@ -2,18 +2,22 @@ package com.jayyaj.todoister;
 
 import android.os.Bundle;
 
+import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
-import com.jayyaj.todoister.databinding.ActivityMainBinding;
+import com.jayyaj.todoister.adapter.RecyclerViewAdapter;
 import com.jayyaj.todoister.model.Priority;
 import com.jayyaj.todoister.model.Task;
 import com.jayyaj.todoister.model.TaskViewModel;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.util.Log;
 import android.view.View;
@@ -25,8 +29,11 @@ import java.util.Calendar;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
-    ActivityMainBinding binding;
     private TaskViewModel taskViewModel;
+    private RecyclerViewAdapter recyclerViewAdapter;
+    private BottomSheetFragment bottomSheetFragment;
+    private RecyclerView recyclerView;
+    private FloatingActionButton fab;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,7 +41,15 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        binding = DataBindingUtil.setContentView(MainActivity.this, R.layout.activity_main);
+        recyclerView = findViewById(R.id.recycler_view);
+        recyclerView.setHasFixedSize(true);
+        recyclerView.setLayoutManager(new LinearLayoutManager(MainActivity.this));
+        fab = findViewById(R.id.fab);
+
+        bottomSheetFragment = new BottomSheetFragment();
+        ConstraintLayout constraintLayout = findViewById(R.id.bottomSheet);
+        BottomSheetBehavior<ConstraintLayout> bottomSheetBehavior = BottomSheetBehavior.from(constraintLayout);
+        bottomSheetBehavior.setPeekHeight(BottomSheetBehavior.STATE_HIDDEN);
 
         taskViewModel = new ViewModelProvider.AndroidViewModelFactory(
                 MainActivity.this
@@ -42,15 +57,20 @@ public class MainActivity extends AppCompatActivity {
                 .create(TaskViewModel.class);
 
         taskViewModel.getAllTasks().observe(MainActivity.this, tasks -> {
-            for (Task task : tasks)
-                Log.d("Tasks", task.getName());
+            recyclerViewAdapter = new RecyclerViewAdapter(tasks, MainActivity.this);
+            recyclerView.setAdapter(recyclerViewAdapter);
         });
 
-        binding.fab.setOnClickListener(view -> {
-            Task task = new Task("To do", Priority.CHILL, Calendar.getInstance().getTime(), Calendar.getInstance().getTime(), false);
-            TaskViewModel.create(task);
+        fab.setOnClickListener(view -> {
+            showBottomSheetDialog();
         });
-    };
+    }
+
+    private void showBottomSheetDialog() {
+        //Fragment manager knows if there are other open fragments and deals with that
+        //.getTag() gets the tag id that gets automatically created for each fragment
+        bottomSheetFragment.show(getSupportFragmentManager(), bottomSheetFragment.getTag());
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

@@ -24,7 +24,7 @@ public abstract class TaskRoomDatabase extends RoomDatabase {
 
     private static volatile TaskRoomDatabase INSTANCE;
 
-    public static final String DATABASE_NAME = "todoux_db";
+    public static final String DATABASE_NAME = "todoister_db";
 
     public static ExecutorService databaseWriteExecutor = Executors.newFixedThreadPool(NUMBER_THREADS);
 

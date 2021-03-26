@@ -1,4 +1,4 @@
-package com.jayyaj.todoister;
+package com.bawp.todoister;
 
 import android.content.Context;
 

@@ -14,7 +14,9 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.chip.Chip;
 import com.jayyaj.todoister.R;
+import com.jayyaj.todoister.databinding.TaskRowBinding;
 import com.jayyaj.todoister.model.Task;
+import com.jayyaj.todoister.util.Utils;
 
 import java.util.List;
 import java.util.Objects;
@@ -24,10 +26,11 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     private List<Task> taskList;
     private Context context;
 
-    public RecyclerViewAdapter(List<Task> taskList, Context context, OnTaskClickListener onTaskClickListener) {
+    //TODO Add onclick listener for each row
+    public RecyclerViewAdapter(List<Task> taskList, Context context) {
         this.taskList = taskList;
         this.context = context;
-        this.onTaskClickListener = onTaskClickListener;
+        //this.onTaskClickListener = onTaskClickListener;
     }
 
     @NonNull
@@ -43,7 +46,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         Task task = Objects.requireNonNull(taskList.get(position));
         holder.name.setText(task.getName());
         holder.isDone.setChecked(task.getDone());
-        holder.day.setText(task.getDueDate().toString().trim());
+        holder.day.setText(Utils.formatDate(task.getDueDate()));
     }
 
     @Override
