@@ -12,6 +12,7 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.Toast;
 
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import com.jayyaj.todoister.model.Priority;
@@ -24,7 +25,7 @@ import androidx.constraintlayout.widget.Group;
 import java.util.Calendar;
 import java.util.Date;
 
-public class BottomSheetFragment extends BottomSheetDialogFragment {
+public class BottomSheetFragment extends BottomSheetDialogFragment implements View.OnClickListener {
     private EditText todoTitleEditText;
     private Button todoDateShortcut;
     private Button todoPriorityShortcut;
@@ -35,7 +36,8 @@ public class BottomSheetFragment extends BottomSheetDialogFragment {
     private ImageButton todoSaveButton;
     private CalendarView calendarView;
     private Group calendarGroup;
-    private long selectedDate;
+    private Calendar c = Calendar.getInstance();
+    private Date selectedDate;
 
     public BottomSheetFragment() {
     }
@@ -58,8 +60,11 @@ public class BottomSheetFragment extends BottomSheetDialogFragment {
 
         //Only used inside onCreateView for now so don't need to instantiate them as instance variables yet
         Button todayButton = view.findViewById(R.id.todayButton);
+        todayButton.setOnClickListener(this);
         Button tomorrowButton = view.findViewById(R.id.tomorrowButton);
+        tomorrowButton.setOnClickListener(this);
         Button nextWeekButton = view.findViewById(R.id.nextWeekButton);
+        nextWeekButton.setOnClickListener(this);
 
         return view;
     }
@@ -82,18 +87,33 @@ public class BottomSheetFragment extends BottomSheetDialogFragment {
             RadioButton radioButton = (RadioButton) view.findViewById(priorityId);
             Priority priority = Priority.valueOf(radioButton.getText().toString().trim());
 
-            Date dueDate = new Date(selectedDate);
-
-            if(!TextUtils.isEmpty(task) && priority != null && dueDate != null) {
-                Task newtask = new Task(task, priority, dueDate, Calendar.getInstance().getTime(), false);
+            if(!TextUtils.isEmpty(task) && priority != null && selectedDate != null) {
+                Task newtask = new Task(task, priority, selectedDate, Calendar.getInstance().getTime(), false);
                 TaskViewModel.create(newtask);
+            } else {
+                //Toast.makeText(this, "Please specify the task", Toast.LENGTH_SHORT).show();
             }
         });
 
         calendarView.setOnDateChangeListener((calView, year, month, day) -> {
-            Calendar c = Calendar.getInstance();
+            c.clear();
             c.set(year, month, day);
-            selectedDate = c.getTimeInMillis();
+            selectedDate = c.getTime();
         });
+    }
+
+    @Override
+    public void onClick(View v) {
+        int id = v.getId();
+        if (id == R.id.todayButton) {
+            c.add(Calendar.DAY_OF_YEAR, 0);
+            selectedDate = c.getTime();
+        } else if (id == R.id.tomorrowButton) {
+            c.add(Calendar.DAY_OF_YEAR, 1);
+            selectedDate = c.getTime();
+        } else if (id == R.id.nextWeekButton) {
+            c.add(Calendar.DAY_OF_YEAR, 7);
+            selectedDate = c.getTime();
+        }
     }
 }

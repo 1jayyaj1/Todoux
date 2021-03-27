@@ -22,15 +22,13 @@ import java.util.List;
 import java.util.Objects;
 
 public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapter.ViewHolder> {
-    private OnTaskClickListener onTaskClickListener;
-    private List<Task> taskList;
-    private Context context;
+    private final OnTaskClickListener onTaskClickListener;
+    private final List<Task> taskList;
 
     //TODO Add onclick listener for each row
-    public RecyclerViewAdapter(List<Task> taskList, Context context) {
+    public RecyclerViewAdapter(List<Task> taskList, OnTaskClickListener taskClickListener) {
         this.taskList = taskList;
-        this.context = context;
-        //this.onTaskClickListener = onTaskClickListener;
+        this.onTaskClickListener = taskClickListener;
     }
 
     @NonNull
@@ -38,7 +36,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.task_row, parent, false);
-        return new ViewHolder(view, onTaskClickListener);
+        return new ViewHolder(view);
     }
 
     @Override
@@ -55,27 +53,30 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        OnTaskClickListener onTaskClickListener;
+        OnTaskClickListener taskClickListener;
         public AppCompatRadioButton isDone;
         public AppCompatTextView name;
         public Chip day;
 
-        public ViewHolder(@NonNull View itemView, OnTaskClickListener onTaskClickListener) {
+        public ViewHolder(@NonNull View itemView) {
             super(itemView);
-            name = itemView.findViewById(R.id.todo_row_todo);
-            isDone = itemView.findViewById(R.id.todo_radio_button);
-            day = itemView.findViewById(R.id.todo_row_chip);
-            this.onTaskClickListener = onTaskClickListener;
+            this.name = itemView.findViewById(R.id.todo_row_todo);
+            this.isDone = itemView.findViewById(R.id.todo_radio_button);
+            this.day = itemView.findViewById(R.id.todo_row_chip);
+            this.taskClickListener = onTaskClickListener;
             itemView.setOnClickListener(this);
+            this.isDone.setOnClickListener(this);
         }
 
         @Override
         public void onClick(View v) {
-            onTaskClickListener.onTaskClick(getAdapterPosition());
+            Task task = taskList.get(getAdapterPosition());
+            int id = v.getId();
+            if (id == R.id.todo_row_layout) {
+                taskClickListener.onTaskClick(getAdapterPosition(), task);
+            } else if (id == R.id.todo_radio_button) {
+                taskClickListener.onTaskRadioButtonClick(task);
+            }
         }
-    }
-
-    public interface OnTaskClickListener {
-        void onTaskClick(int position);
     }
 }

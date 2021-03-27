@@ -5,6 +5,7 @@ import android.os.Bundle;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
+import com.jayyaj.todoister.adapter.OnTaskClickListener;
 import com.jayyaj.todoister.adapter.RecyclerViewAdapter;
 import com.jayyaj.todoister.model.Priority;
 import com.jayyaj.todoister.model.Task;
@@ -28,7 +29,7 @@ import android.view.MenuItem;
 import java.util.Calendar;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements OnTaskClickListener {
     private TaskViewModel taskViewModel;
     private RecyclerViewAdapter recyclerViewAdapter;
     private BottomSheetFragment bottomSheetFragment;
@@ -58,7 +59,7 @@ public class MainActivity extends AppCompatActivity {
                 .create(TaskViewModel.class);
 
         taskViewModel.getAllTasks().observe(MainActivity.this, tasks -> {
-            recyclerViewAdapter = new RecyclerViewAdapter(tasks, MainActivity.this);
+            recyclerViewAdapter = new RecyclerViewAdapter(tasks, this);
             recyclerView.setAdapter(recyclerViewAdapter);
         });
 
@@ -93,5 +94,15 @@ public class MainActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onTaskClick(int adapterPosition, Task task) {
+        Log.d("ok", String.valueOf(adapterPosition));
+    }
+
+    @Override
+    public void onTaskRadioButtonClick(Task task) {
+        taskViewModel.delete(task);
     }
 }
