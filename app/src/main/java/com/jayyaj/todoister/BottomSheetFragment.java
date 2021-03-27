@@ -1,5 +1,6 @@
 package com.jayyaj.todoister;
 
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
@@ -15,12 +16,16 @@ import android.widget.RadioGroup;
 import android.widget.Toast;
 
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
+import com.google.android.material.snackbar.Snackbar;
 import com.jayyaj.todoister.model.Priority;
+import com.jayyaj.todoister.model.SharedViewModel;
 import com.jayyaj.todoister.model.Task;
 import com.jayyaj.todoister.model.TaskViewModel;
+import com.jayyaj.todoister.util.Utils;
 
 import androidx.annotation.NonNull;
 import androidx.constraintlayout.widget.Group;
+import androidx.lifecycle.ViewModelProvider;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -31,13 +36,16 @@ public class BottomSheetFragment extends BottomSheetDialogFragment implements Vi
     private Button todoPriorityShortcut;
     private RadioGroup priorityRadioGroup;
     private Group priorityGroup;
-    private RadioButton selectedRadioButton;
-    private long selectedButtonId;
     private ImageButton todoSaveButton;
     private CalendarView calendarView;
     private Group calendarGroup;
     private Calendar c = Calendar.getInstance();
     private Date selectedDate;
+    private SharedViewModel sharedViewModel;
+    private boolean isEditable;
+    private Priority priority = Priority.MEH;
+    private int selectedButtonId;
+    private RadioButton selectedRadioButton;
 
     public BottomSheetFragment() {
     }
@@ -69,36 +77,88 @@ public class BottomSheetFragment extends BottomSheetDialogFragment implements Vi
         return view;
     }
 
+    @Override
+    public void onPause() {
+        super.onPause();
+        sharedViewModel.setIsEditable(false);
+        todoTitleEditText.setText("");
+        selectedDate = c.getTime();
+        priority = Priority.MEH;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (sharedViewModel.getIsEditable() && sharedViewModel.getSelectedItem().getValue() != null) {
+            isEditable = sharedViewModel.getIsEditable();
+            Task task = sharedViewModel.getSelectedItem().getValue();
+            todoTitleEditText.setText(task.getName());
+            selectedDate = task.dueDate;
+            priority = task.priority;
+        }
+    }
+
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        sharedViewModel = new ViewModelProvider(requireActivity()).get(SharedViewModel.class);
+
         todoDateShortcut.setOnClickListener(v -> {
+            Utils.hideSoftKeyboard(v);
             calendarGroup.setVisibility(calendarGroup.getVisibility() == View.GONE ? View.VISIBLE : View.GONE);
-        });
-
-        todoPriorityShortcut.setOnClickListener(v -> {
-            priorityGroup.setVisibility(priorityGroup.getVisibility() == View.GONE ? View.VISIBLE : View.GONE);
-        });
-
-        todoSaveButton.setOnClickListener(v -> {
-            String task = todoTitleEditText.getText().toString().trim();
-
-            int priorityId = priorityRadioGroup.getCheckedRadioButtonId();
-            RadioButton radioButton = (RadioButton) view.findViewById(priorityId);
-            Priority priority = Priority.valueOf(radioButton.getText().toString().trim());
-
-            if(!TextUtils.isEmpty(task) && priority != null && selectedDate != null) {
-                Task newtask = new Task(task, priority, selectedDate, Calendar.getInstance().getTime(), false);
-                TaskViewModel.create(newtask);
-            } else {
-                //Toast.makeText(this, "Please specify the task", Toast.LENGTH_SHORT).show();
-            }
         });
 
         calendarView.setOnDateChangeListener((calView, year, month, day) -> {
             c.clear();
             c.set(year, month, day);
             selectedDate = c.getTime();
+        });
+
+        todoPriorityShortcut.setOnClickListener(v -> {
+            Utils.hideSoftKeyboard(v);
+            priorityGroup.setVisibility(priorityGroup.getVisibility() == View.GONE ? View.VISIBLE : View.GONE);
+
+            priorityRadioGroup.setOnCheckedChangeListener((group, checkedId) -> {
+                if (priorityGroup.getVisibility() == View.VISIBLE) {
+                    selectedButtonId = checkedId;
+                    selectedRadioButton = view.findViewById(selectedButtonId);
+                    if (selectedRadioButton.getId() == R.id.priorityYikesRadio) {
+                        priority = Priority.YIKES;
+                    } else if (selectedRadioButton.getId() == R.id.priorityMediumRadio) {
+                        priority = Priority.MEH;
+                    } else if (selectedRadioButton.getId() == R.id.priorityLowRadio) {
+                        priority = Priority.CHILL;
+                    } else {
+                        priority = Priority.CHILL;
+                    }
+                } else {
+                    priority = Priority.CHILL;
+                }
+            });
+        });
+
+        todoSaveButton.setOnClickListener(v -> {
+            String task = todoTitleEditText.getText().toString().trim();
+
+            if(!TextUtils.isEmpty(task) && selectedDate != null && priority != null) {
+                Task newtask = new Task(task, priority, selectedDate, Calendar.getInstance().getTime(), false);
+                if (isEditable) {
+                    Task updatedTask = sharedViewModel.getSelectedItem().getValue();
+                    updatedTask.setName(task);
+                    updatedTask.setPriority(priority);
+                    updatedTask.setDueDate(selectedDate);
+                    TaskViewModel.update(updatedTask);
+                    sharedViewModel.setIsEditable(false);
+                } else {
+                    TaskViewModel.create(newtask);
+                }
+                todoTitleEditText.setText("");
+                if (this.isVisible()) {
+                    this.dismiss();
+                }
+            } else {
+                Snackbar.make(todoSaveButton, R.string.empty_field, Snackbar.LENGTH_SHORT).show();
+            }
         });
     }
 

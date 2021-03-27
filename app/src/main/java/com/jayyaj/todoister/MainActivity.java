@@ -8,6 +8,7 @@ import com.google.android.material.snackbar.Snackbar;
 import com.jayyaj.todoister.adapter.OnTaskClickListener;
 import com.jayyaj.todoister.adapter.RecyclerViewAdapter;
 import com.jayyaj.todoister.model.Priority;
+import com.jayyaj.todoister.model.SharedViewModel;
 import com.jayyaj.todoister.model.Task;
 import com.jayyaj.todoister.model.TaskViewModel;
 
@@ -35,6 +36,7 @@ public class MainActivity extends AppCompatActivity implements OnTaskClickListen
     private BottomSheetFragment bottomSheetFragment;
     private RecyclerView recyclerView;
     private FloatingActionButton fab;
+    private SharedViewModel sharedViewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,6 +51,7 @@ public class MainActivity extends AppCompatActivity implements OnTaskClickListen
         fab = findViewById(R.id.fab);
 
         bottomSheetFragment = new BottomSheetFragment();
+
         ConstraintLayout constraintLayout = findViewById(R.id.bottomSheet);
         BottomSheetBehavior<ConstraintLayout> bottomSheetBehavior = BottomSheetBehavior.from(constraintLayout);
         bottomSheetBehavior.setPeekHeight(BottomSheetBehavior.STATE_HIDDEN);
@@ -57,6 +60,8 @@ public class MainActivity extends AppCompatActivity implements OnTaskClickListen
                 MainActivity.this
                 .getApplication())
                 .create(TaskViewModel.class);
+
+        sharedViewModel = new ViewModelProvider(this).get(SharedViewModel.class);
 
         taskViewModel.getAllTasks().observe(MainActivity.this, tasks -> {
             recyclerViewAdapter = new RecyclerViewAdapter(tasks, this);
@@ -97,12 +102,17 @@ public class MainActivity extends AppCompatActivity implements OnTaskClickListen
     }
 
     @Override
-    public void onTaskClick(int adapterPosition, Task task) {
-        Log.d("ok", String.valueOf(adapterPosition));
+    public void onTaskClick(Task task) {
+        sharedViewModel.selectItem(task);
+        sharedViewModel.setIsEditable(true);
+        showBottomSheetDialog();
     }
 
     @Override
     public void onTaskRadioButtonClick(Task task) {
-        taskViewModel.delete(task);
+        //Notice I call TaskViewModel and not taskViewModel
+        //cuz method is static so no need for instance
+        TaskViewModel.delete(task);
+        recyclerViewAdapter.notifyDataSetChanged();
     }
 }
