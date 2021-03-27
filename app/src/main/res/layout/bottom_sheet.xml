@@ -3,7 +3,8 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools" >
-    <androidx.constraintlayout.widget.ConstraintLayout android:id="@+id/enterTodo"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/bottomSheet"
         style="@style/Animation.Design.BottomSheetDialog"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -17,7 +18,7 @@
             android:id="@+id/todoTitleText"
             style="@style/title_style"
             android:layout_marginStart="16dp"
-            android:layout_marginTop="32dp"
+            android:layout_marginTop="16dp"
             android:text="@string/todo_title"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -27,7 +28,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="6dp"
             android:layout_marginEnd="16dp"
             android:autofillHints=""
             android:ems="10"
@@ -42,7 +43,7 @@
             style="@style/pill_button"
             android:layout_width="wrap_content"
             android:layout_marginStart="16dp"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="6dp"
             android:text="@string/calendar_button_text"
             android:textColorLink="#FFFFFF"
             app:cornerRadius="24dp"
@@ -56,7 +57,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="6dp"
             android:text="@string/priority_button_text"
             android:textColorLink="@color/red_icon"
             app:cornerRadius="24dp"
@@ -69,7 +70,7 @@
             style="@style/image_button_style"
             android:layout_width="70dp"
             android:layout_height="50dp"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="6dp"
             android:layout_marginEnd="16dp"
             android:contentDescription="@string/save_button_description"
             android:src="@drawable/ic_baseline_arrow_circle_up_24"
@@ -89,27 +90,24 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/todoDateShortcut" />
 
-        <CalendarView
-            android:id="@+id/calendar"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="16dp"
-            android:layout_marginEnd="16dp"
-            android:layout_marginBottom="16dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/tomorrowButton" />
+        <androidx.constraintlayout.widget.Group
+            android:id="@+id/priorityGroup"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="275dp"
+            android:visibility="gone"
+            app:constraint_referenced_ids="priorityRadioGroup,priorityTitleText"
+            app:layout_constraintBottom_toBottomOf="parent" />
 
         <RadioGroup
             android:id="@+id/priorityRadioGroup"
             android:layout_width="0dp"
-            android:layout_height="45dp"
+            android:layout_height="40dp"
             android:layout_marginStart="16dp"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="6dp"
             android:layout_marginEnd="16dp"
             android:orientation="horizontal"
+            android:visibility="visible"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/priorityTitleText">
@@ -168,7 +166,7 @@
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:layout_marginStart="16dp"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="4dp"
             android:layout_marginEnd="4dp"
             android:text="@string/todo_today_text"
             android:textSize="12sp"
@@ -204,7 +202,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="4dp"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="4dp"
             android:layout_marginEnd="16dp"
             android:text="@string/todo_next_week_text"
             android:textSize="14sp"
@@ -216,11 +214,22 @@
             app:layout_constraintStart_toEndOf="@+id/tomorrowButton"
             app:layout_constraintTop_toBottomOf="@+id/dateTitleText" />
 
-        <androidx.constraintlayout.widget.Group
+        <CalendarView
+            android:id="@+id/calendarView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:visibility="visible"
-            app:constraint_referenced_ids="calendar,todayButton,tomorrowButton,nextWeekButton,dateTitleText" />
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/todayButton"
+            app:layout_constraintVertical_bias="0.098" />
+
+        <androidx.constraintlayout.widget.Group
+            android:id="@+id/calendarGroup"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            app:constraint_referenced_ids="todayButton,tomorrowButton,nextWeekButton,dateTitleText,calendarView" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

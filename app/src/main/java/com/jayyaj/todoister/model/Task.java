@@ -9,41 +9,37 @@ import java.util.Date;
 
 @Entity(tableName = "task_table")
 public class Task {
+    @ColumnInfo(name = "task_id")
     @PrimaryKey(autoGenerate = true)
-    public int id;
+    public long taskId;
 
-    @ColumnInfo(name = "name")
     public String name;
 
-    @ColumnInfo(name = "priority")
-    public String priority;
+    public Priority priority;
 
     @ColumnInfo(name = "due_date")
     public Date dueDate;
 
-    @ColumnInfo(name = "created_At")
-    public Date createdAt;
+    @ColumnInfo(name = "created_at")
+    public Date dateCreated;
 
     @ColumnInfo(name = "is_done")
     public Boolean isDone;
 
-    public Task() {
-    }
-
-    public Task(@NonNull String name, @NonNull String priority, @NonNull Date dueDate, @NonNull Date createdAt, @NonNull Boolean isDone) {
+    public Task(String name, Priority priority, Date dueDate, Date dateCreated, Boolean isDone) {
         this.name = name;
         this.priority = priority;
         this.dueDate = dueDate;
-        this.createdAt = createdAt;
+        this.dateCreated = dateCreated;
         this.isDone = isDone;
     }
 
-    public int getId() {
-        return id;
+    public long getTaskId() {
+        return taskId;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public void setTaskId(long taskId) {
+        this.taskId = taskId;
     }
 
     public String getName() {
@@ -54,11 +50,11 @@ public class Task {
         this.name = name;
     }
 
-    public String getPriority() {
+    public Priority getPriority() {
         return priority;
     }
 
-    public void setPriority(String priority) {
+    public void setPriority(Priority priority) {
         this.priority = priority;
     }
 
@@ -70,12 +66,12 @@ public class Task {
         this.dueDate = dueDate;
     }
 
-    public Date getCreatedAt() {
-        return createdAt;
+    public Date getDateCreated() {
+        return dateCreated;
     }
 
-    public void setCreatedAt(Date createdAt) {
-        this.createdAt = createdAt;
+    public void setDateCreated(Date dateCreated) {
+        this.dateCreated = dateCreated;
     }
 
     public Boolean getDone() {
@@ -84,5 +80,17 @@ public class Task {
 
     public void setDone(Boolean done) {
         isDone = done;
+    }
+
+    @Override
+    public String toString() {
+        return "Task{" +
+                "taskId=" + taskId +
+                ", name='" + name + '\'' +
+                ", priority=" + priority +
+                ", dueDate=" + dueDate +
+                ", dateCreated=" + dateCreated +
+                ", isDone=" + isDone +
+                '}';
     }
 }
